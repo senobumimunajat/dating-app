@@ -29,3 +29,8 @@ export const getUserFromLocalStorage = () => {
   if (user === null) return null;
   return user;
 };
+
+export const updateProfile = async (user) => {
+  const { data } = await client.put("/member/profile", user);
+  return data;
+};
