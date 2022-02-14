@@ -34,3 +34,20 @@ export const updateProfile = async (user) => {
   const { data } = await client.put("/member/profile", user);
   return data;
 };
+
+export const uploadAvatar = async (memberId, image) => {
+  const form = new FormData();
+  form.append("profile", image);
+
+  const { data } = await client.post(`/member/profile?id=${memberId}`, form, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return data;
+};
+
+export const getInterestData = async () => {
+  const { data } = await client.get("/interest");
+  return data;
+};

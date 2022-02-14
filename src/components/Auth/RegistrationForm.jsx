@@ -6,6 +6,8 @@ import { authRegister, userActivation } from '../../services/service';
 import validationUtils from '../../utils/validationUtils';
 
 function RegistrationForm({ setValue }) {
+
+
     const formik = useFormik({
         initialValues: {
             email: '',

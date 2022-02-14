@@ -7,7 +7,9 @@ import Header from '../../shared/Header/Header'
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { useFormik } from 'formik'
 import { format } from 'date-fns';
-import { updateProfile, getUserFromLocalStorage } from '../../services/service'
+import { updateProfile, getUserFromLocalStorage, uploadAvatar } from '../../services/service'
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router'
 
 
 const Input = styled('input')({
@@ -21,6 +23,7 @@ function UpdateProfileForm() {
         previewImage: null,
     });
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {
@@ -39,9 +42,34 @@ function UpdateProfileForm() {
             const user = {
                 ...values,
                 memberId: getUserFromLocalStorage().memberId,
-                dob: format(values.dob, "yyyy-MM-dd"),
+                bod: format(values.dob, "yyyy-MM-dd"),
+                selfDescription: values.bio,
             }
-            console.log(user);
+            updateProfile(user)
+                .then(() => {
+                    uploadAvatar(user.memberId, image.currentImage).then((res) => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Registration Succesfully',
+                            text: 'Registration Succesfully',
+                            confirmButtonColor: '#E60965'
+                        }).then(() => navigate('/profile-preference'));
+                    }).catch((err) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: `Error ${err.response.data.HttpCode}`,
+                            text: err.response.data.ErrorDescription.message,
+                            confirmButtonColor: '#E60965'
+                        });
+                    });
+                }).catch((err) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: `Error ${err.response.data.HttpCode}`,
+                        text: err.response.data.ErrorDescription.message,
+                        confirmButtonColor: '#E60965'
+                    });
+                })
         },
     });
 
